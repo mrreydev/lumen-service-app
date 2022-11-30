@@ -68,3 +68,8 @@ $router->group(['middleware' => ['auth']], function($router) {
 });
 
 
+$router->group(['prefix' => 'public'], function() use($router){
+    $router->get('/posts', 'Public\PostsController@index');
+    $router->get('/posts/{postId}', 'Public\PostsController@show');
+});
+

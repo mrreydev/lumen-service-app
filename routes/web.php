@@ -31,35 +31,60 @@ $router->group(['prefix' => 'auth'], function() use($router){
 });
 
 $router->group(['middleware' => ['auth']], function($router) {
+    /**
+     * Route Posts
+     */
     $router->get('/posts', 'PostsController@index');
     $router->get('/posts/{postId}', 'PostsController@show');
     $router->post('/posts', 'PostsController@store');
     $router->put('/posts/{postId}', 'PostsController@update');
     $router->delete('/posts/{postId}', 'PostsController@delete');
 
+    /**
+     * Route Comments
+     */
+    $router->get('/comments', 'CommentController@index');
+    $router->get('/comments/{id}', 'CommentController@show');
+    $router->post('/posts/{id}/comment', 'CommentController@store');
+    $router->get('/posts/{id}/comment', 'CommentController@getPostComments');
+    /**
+     * Route Majors
+     */
     $router->get('/majors', 'MajorController@index');
     $router->post('/majors', 'MajorController@create');
     $router->patch('/majors/{id}', 'MajorController@update');
     $router->delete('/majors/{id}', 'MajorController@delete');
     
+    /**
+     * Route Professors
+     */
     $router->get('/professors', 'ProfessorController@index');
     $router->post('/professors', 'ProfessorController@create');
     $router->get('/professors/{id}', 'ProfessorController@show');
     $router->patch('/professors/{id}', 'ProfessorController@update');
     $router->delete('/professors/{id}', 'ProfessorController@delete');
     
+    /**
+     * Route Students
+     */
     $router->get('/students', 'StudentController@index');
     $router->post('/students', 'StudentController@create');
     $router->get('/students/{id}', 'StudentController@show');
     $router->patch('/students/{id}', 'StudentController@update');
     $router->delete('/students/{id}', 'StudentController@delete');
     
+    /**
+     * Route Subjects
+     */
     $router->get('/subjects', 'SubjectController@index');
     $router->post('/subjects', 'SubjectController@create');
     $router->get('/subjects/{id}', 'SubjectController@show');
     $router->patch('/subjects/{id}', 'SubjectController@update');
     $router->delete('/subjects/{id}', 'SubjectController@delete');
     
+    /**
+     * Route Scores
+     */
     $router->get('/scores', 'ScoreController@index');
     $router->post('/scores', 'ScoreController@create');
     $router->get('/scores/{id}', 'ScoreController@show');
@@ -71,5 +96,7 @@ $router->group(['middleware' => ['auth']], function($router) {
 $router->group(['prefix' => 'public'], function() use($router){
     $router->get('/posts', 'Public\PostsController@index');
     $router->get('/posts/{postId}', 'Public\PostsController@show');
+
+    
 });
 

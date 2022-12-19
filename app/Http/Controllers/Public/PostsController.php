@@ -17,14 +17,14 @@ class PostsController extends Controller
     public function __construct()
     {
         //
-    }
+    }   
 
     public function index(Request $request)
     {
         $acceptHeader = $request->header('Accept');
 
         if ($acceptHeader == 'application/json' || $acceptHeader == 'application/xml') {
-            $posts = Post::OrderBy("id", "DESC")->paginate()->toArray();
+            $posts = Post::with('user')->OrderBy("id", "DESC")->paginate()->toArray();
 
             $response = [
                 'total_count' => $posts['total'],
@@ -64,7 +64,9 @@ class PostsController extends Controller
     public function show(Request $request, $postId) {
         $acceptHeader = $request->header('Accept');
 
-        $post = Post::find($postId);
+        $post = Post::with(['user' => function ($query) {
+            $query->select('id', 'name');
+        }]);
 
         if (!$post) {
             abort(404);

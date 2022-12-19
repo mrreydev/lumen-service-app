@@ -69,10 +69,10 @@ class AuthController extends Controller
 
         $credentials = $request->only(['email', 'password']);
 
-        if (!$token = Auth::attempt($credentials)) {
+        if (!$token = Auth::setTTL(180)->attempt($credentials)) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
+        
         return response()->json([
             'token' => $token,
             'token_type' => 'Bearer',

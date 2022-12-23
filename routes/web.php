@@ -34,6 +34,15 @@ $router->group(['middleware' => ['auth']], function($router) {
     /**
      * Route Posts
      */
+    $router->get('/categories', 'CategoryController@index');
+    $router->get('/categories/{id}', 'CategoryController@show');
+    $router->post('/categories', 'CategoryController@store');
+    $router->put('/categories/{id}', 'CategoryController@update');
+    $router->delete('/categories/{id}', 'CategoryController@delete');
+
+    /**
+     * Route Posts
+     */
     $router->get('/posts', 'PostsController@index');
     $router->get('/posts/{postId}', 'PostsController@show');
     $router->post('/posts', 'PostsController@store');

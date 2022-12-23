@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\CategoryPost;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -39,9 +40,9 @@ class PostsController extends Controller
 
         if ($acceptHeader == 'application/json' || $acceptHeader == 'application/xml') {
             if (Auth::user()->role === 'admin') {
-                $posts = Post::OrderBy("id", "DESC")->paginate()->toArray();
+                $posts = Post::with('categories')->OrderBy("id", "DESC")->paginate()->toArray();
             } else {
-                $posts = Post::Where(['user_id' => Auth::user()->id])->OrderBy("id", "DESC")->paginate()->toArray();
+                $posts = Post::Where(['user_id' => Auth::user()->id])->with('categories')->OrderBy("id", "DESC")->paginate()->toArray();
             }
 
             $response = [
@@ -98,7 +99,8 @@ class PostsController extends Controller
         $validationRules = [
             'title' => 'required|min:5',
             'content' => 'required|min:10',
-            'status' => 'required|in:draft,published'
+            'status' => 'required|in:draft,published',
+            'categories' => 'required|exists:categories,id'
         ];
 
         $input['user_id'] = Auth::user()->id;
@@ -111,6 +113,18 @@ class PostsController extends Controller
 
         if ($acceptHeader == 'application/json' || $acceptHeader == 'application/xml') {
             $post = Post::create($input);
+
+            $dataPivot = [];
+            foreach ($input['categories'] as $key => $value) {
+                $row = [
+                    'post_id' => $post->id,
+                    'category_id' => $value
+                ];
+
+                array_push($dataPivot, $row);
+            }
+
+            $post->categories()->attach($dataPivot);
 
             if ($acceptHeader == 'application/json') {
                 return response()->json($post, 201);
@@ -142,6 +156,11 @@ class PostsController extends Controller
 
         if (!$post) {
             abort(404);
+        }
+        
+        foreach ($post->categories as $category) {
+            # code...
+            $category->pivot;
         }
 
         // Gate Show, Update, Delete Post

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +30,10 @@ class AuthController extends Controller
         $validationRules = [
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed'
+            'password' => 'required|confirmed',
+            'gender' => 'required|in:male,female',
+            'birth_date' => 'required|date',
+            'address' => 'required|string'
         ];
 
         $validator = Validator::make($input, $validationRules);
@@ -39,15 +43,25 @@ class AuthController extends Controller
         }
 
         $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $plainPassword = $request->input('password');
+        $user->name = $input['name'];
+        $user->email = $input['email'];
+        $plainPassword = $input['password'];
         $user->password = app('hash')->make($plainPassword);
-        
-        if ($request->input('role'))
-            $user->role = $request->input('role');
 
+        
+        if ($input['role'])
+        $user->role = $input['role'];
+        
         $user->save();
+        
+        $profile = new Profile([
+            'user_id' => $user->id,
+            'gender' => $input['gender'],
+            'birth_date' => $input['birth_date'],
+            'address' => $input['address'],
+        ]);
+
+        $user->profile()->save($profile);
 
         return response()->json($user, 200);
     }
@@ -85,5 +99,19 @@ class AuthController extends Controller
         Auth::logout();
 
         return response()->json(['message' => 'Logout Success'], 200);
+    }
+
+    public function getUser()
+    {
+        $user = Auth::user();
+        $user->profile;
+
+        $response = [
+            'message' => 'Get User Success',
+            'status_code' => 200,
+            'data' => $user
+        ];
+
+        return response()->json($response, 200);
     }
 }

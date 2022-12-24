@@ -31,6 +31,7 @@ $router->group(['prefix' => 'auth'], function() use($router){
 });
 
 $router->group(['middleware' => ['auth']], function($router) {
+    $router->get('/users', 'AuthController@getUser');
     /**
      * Route Posts
      */

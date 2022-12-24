@@ -40,9 +40,9 @@ class PostsController extends Controller
 
         if ($acceptHeader == 'application/json' || $acceptHeader == 'application/xml') {
             if (Auth::user()->role === 'admin') {
-                $posts = Post::with('categories')->OrderBy("id", "DESC")->paginate()->toArray();
+                $posts = Post::with('categories')->with('comments')->OrderBy("id", "DESC")->paginate()->toArray();
             } else {
-                $posts = Post::Where(['user_id' => Auth::user()->id])->with('categories')->OrderBy("id", "DESC")->paginate()->toArray();
+                $posts = Post::Where(['user_id' => Auth::user()->id])->with('categories')->with('comments')->OrderBy("id", "DESC")->paginate()->toArray();
             }
 
             $response = [
@@ -127,6 +127,10 @@ class PostsController extends Controller
             $post->categories()->attach($dataPivot);
 
             if ($acceptHeader == 'application/json') {
+                foreach ($post->categories as $category) {
+                    # code...
+                    $category->pivot;
+                }
                 return response()->json($post, 201);
             } else {
                 $xml = new \SimpleXMLElement('<posts />');
@@ -152,7 +156,7 @@ class PostsController extends Controller
     public function show(Request $request, $postId) {
         $acceptHeader = $request->header('Accept');
 
-        $post = Post::find($postId);
+        $post = Post::with('comments')->find($postId);
 
         if (!$post) {
             abort(404);

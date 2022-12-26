@@ -31,7 +31,7 @@ $router->group(['prefix' => 'auth'], function() use($router){
 });
 
 $router->group(['middleware' => ['auth']], function($router) {
-    $router->get('/users', 'AuthController@getUser');
+    $router->post('/profiles', 'ProfileController@store');
     /**
      * Route Posts
      */
@@ -106,7 +106,8 @@ $router->group(['middleware' => ['auth']], function($router) {
 $router->group(['prefix' => 'public'], function() use($router){
     $router->get('/posts', 'Public\PostsController@index');
     $router->get('/posts/{postId}', 'Public\PostsController@show');
-
-    
 });
+
+$router->get('/profiles/{userId}', 'ProfileController@show');
+$router->get('/profiles/image/{imageName}', 'ProfileController@image');
 

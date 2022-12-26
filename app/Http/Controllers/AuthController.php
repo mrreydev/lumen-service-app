@@ -30,10 +30,7 @@ class AuthController extends Controller
         $validationRules = [
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
-            'gender' => 'required|in:male,female',
-            'birth_date' => 'required|date',
-            'address' => 'required|string'
+            'password' => 'required|confirmed'
         ];
 
         $validator = Validator::make($input, $validationRules);
@@ -53,15 +50,6 @@ class AuthController extends Controller
         $user->role = $input['role'];
         
         $user->save();
-        
-        $profile = new Profile([
-            'user_id' => $user->id,
-            'gender' => $input['gender'],
-            'birth_date' => $input['birth_date'],
-            'address' => $input['address'],
-        ]);
-
-        $user->profile()->save($profile);
 
         return response()->json($user, 200);
     }

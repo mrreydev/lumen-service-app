@@ -108,6 +108,8 @@ $router->group(['prefix' => 'public'], function() use($router){
     $router->get('/posts/{postId}', 'Public\PostsController@show');
 });
 
+$router->get('/posts/media/{type}/{name}', 'PostsController@getMedia');
+
 $router->get('/profiles/{userId}', 'ProfileController@show');
 $router->get('/profiles/image/{imageName}', 'ProfileController@image');
 

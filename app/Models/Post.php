@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     protected $table = 'posts';
-    protected $fillable = array('title', 'content', 'status', 'user_id');
+    protected $fillable = array('title', 'content', 'status', 'user_id', 'image', 'video');
 
     /**
      * Relation with Users

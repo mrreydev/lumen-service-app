@@ -13,3 +13,13 @@ function generateParentNum()
 
     return $parentNum;
 }
+
+function getFile($name, $path) {
+    $filePath = storage_path($path).'/'.$name;
+    if (file_exists($filePath)) {
+        $file = file_get_contents($filePath);
+        return $file;
+    }
+
+    return null;
+}
